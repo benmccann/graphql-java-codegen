@@ -37,6 +37,7 @@ object GraphQLCodegenSbtPlugin extends AutoPlugin {
     lazy val baseGraphQLSettings: Seq[Def.Setting[_]] = Seq(
       graphql := {
         Codegen(
+          streams.value.log,
           (sourceManaged in graphql).value,
           graphqlSchemaPaths.value,
           sourceDirectory.value / "resources",
@@ -103,6 +104,7 @@ object GraphQLCodegenSbtPlugin extends AutoPlugin {
 
 object Codegen {
   def apply(
+      logger: Logger,
       outputDir: File,
       graphqlSchemaPaths: Seq[String],
       schemasRootDir: File,
@@ -140,6 +142,8 @@ object Codegen {
     mappingConfig.setGenerateRequests(graphqlGenerateRequests);
     mappingConfig.setRequestSuffix(graphqlRequestSuffix.getOrElse(null));
     mappingConfig.setResponseProjectionSuffix(graphqlResponseProjectionSuffix.getOrElse(null));
+
+logger.error("\n\nAPI directory: " + graphqlApiPackageName.getOrElse(null) + "\n\n")
 
     val mappingConfigSupplier = null;
     val generatedSources = new GraphQLCodegen(getSchemas(graphqlSchemaPaths, schemasRootDir), outputDir, mappingConfig, mappingConfigSupplier).generate();
