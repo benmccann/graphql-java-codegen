@@ -37,7 +37,7 @@ object GraphQLCodegenSbtPlugin extends AutoPlugin {
     lazy val baseGraphQLSettings: Seq[Def.Setting[_]] = Seq(
       graphql := {
         Codegen(
-          sourceManaged.value,
+          (sourceManaged in graphql).value,
           graphqlSchemaPaths.value,
           sourceDirectory.value / "resources",
           graphqlModelNamePrefix.value,
@@ -63,8 +63,8 @@ object GraphQLCodegenSbtPlugin extends AutoPlugin {
       // This follows the output directory structure recommended by sbt team
       // https://github.com/sbt/sbt/issues/1664#issuecomment-213057686
       sourceManaged in graphql := crossTarget.value / "src_managed_graphql",
-      managedSourceDirectories in Compile += (sourceManaged in graphql).value,
-      Compile / sourceGenerators += graphql.taskValue
+      managedSourceDirectories += (sourceManaged in graphql).value,
+      sourceGenerators += graphql.taskValue
     )
   }
 
